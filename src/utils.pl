@@ -1,4 +1,3 @@
-% src/utils.pl
 :- module(utils, [
     get_valid_input/3,
     string_to_number/2,
@@ -9,14 +8,22 @@
 :- use_module(library(readutil)).
 
 get_valid_input(Min, Max, Choice) :-
+    constants:error_color(Red),
+    constants:reset_color(Reset),
     repeat,
     read_line_to_string(user_input, Input),
-    string_to_number(Input, Num),
-    integer(Num),
-    Num >= Min, Num =< Max,
-    Choice = Num, !.
-get_valid_input(_, _, _) :-
-    write('Entrada inválida. Tente novamente.'), fail.
+    ( catch(string_to_number(Input, Num), _, fail)
+    ->  ( integer(Num),
+          Num >= Min,
+          Num =< Max
+        -> Choice = Num, !
+        ;  format('~s❌ Por favor, insira um número entre ~w e ~w.~s\n', 
+                  [Red, Min, Max, Reset]),
+           fail
+        )
+    ;   format('~s❌ Por favor, insira um número.~s\n', [Red, Reset]),
+        fail
+    ).
 
 string_to_number(Str, Num) :-
     catch(atom_number(Str, Num), _, fail).

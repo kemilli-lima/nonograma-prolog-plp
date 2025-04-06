@@ -96,14 +96,15 @@ give_hint(GameState, NewGameState, Message) :-
 
 % Encontra a primeira célula que difere da solução
 find_incorrect_cell([], [], _, _, (-1,-1)). % Caso base: fim do tabuleiro
-find_incorrect_cell([CRow|GridRest], [SRow|SolRest], X, Y, Pos) :-
-    find_incorrect_in_row(CRow, SRow, X, Y, Pos),
-    (   Pos == (-1,-1)
+find_incorrect_cell([CRow|GridRest], [SRow|SolRest], X, _, Pos) :-
+    find_incorrect_in_row(CRow, SRow, X, 0, PosInRow),
+    (   PosInRow == (-1,-1)
     ->  % Não encontrou nesta linha, avança para próxima
         X1 is X + 1,
         find_incorrect_cell(GridRest, SolRest, X1, 0, Pos)
-    ;   true
+    ;   Pos = PosInRow  % Encontrou na linha atual
     ).
+
 
 % Verifica células em uma linha específica
 find_incorrect_in_row([], [], _, _, (-1,-1)). % Fim da linha
@@ -115,6 +116,7 @@ find_incorrect_in_row([C|CRest], [S|SRest], X, Y, Pos) :-
         Y1 is Y + 1,
         find_incorrect_in_row(CRest, SRest, X, Y1, Pos)
     ).
+
 
 % ======================
 % CONTROLE DE DERROTA
