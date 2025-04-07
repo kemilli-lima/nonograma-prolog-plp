@@ -14,6 +14,7 @@
 :- use_module('../core/logic').      
 :- use_module('../utils').           
 :- use_module('../core/game_state'). 
+:- use_module('../save_load').
 
 % ======================
 % LOOP PRINCIPAL DO JOGO
@@ -61,6 +62,32 @@ handle_input(GameState, Key, NewGameState) :-
     ; Key = 'h' -> % Pedir dica
         logic:give_hint(GameState, NewGameState, Msg),
         write(Msg), nl, utils:pause(1)
+    ; Key = 'v' ->
+        read_line_to_string(user_input, _Discard),
+        write("Digite o nome do arquivo de save (sem espaços): "),
+        read_line_to_string(user_input, SaveStr),
+        atom_string(SaveName, SaveStr),
+
+
+        write("[DEBUG] Tentando salvar...\n"),
+
+        (   catch(
+                (save_load:save_game(SaveName, GameState),
+                write("[DEBUG] save_game executado com sucesso.\n")
+                ),
+                Error,
+                (   format("❌ Erro capturado: ~w~n", [Error]),
+                    fail
+                )
+            )
+        ->  write("✅ Jogo salvo com sucesso!"), nl
+        ;   write("⚠️  O jogo *não* foi salvo.\n")
+        ),
+
+        utils:pause(5),
+        NewGameState = GameState
+
+
     ; Key = 'q' -> halt % Sair
     ; NewGameState = GameState % Tecla inválida - mantém estado
     ).
