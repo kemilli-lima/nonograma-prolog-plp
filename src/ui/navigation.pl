@@ -28,12 +28,12 @@ start_game_loop(GameState) :-
 game_loop(GameState) :-
     % Verifica condições de término
     ( logic:check_victory(GameState) -> 
-         ui_core:show_victory,       % Vitória
-         utils:pause(2),
+         ui_core:show_victory(GameState),       % Vitória
+         utils:pause(1),
          halt
     ; logic:is_game_over(GameState) -> 
-         ui_core:show_game_over,     % Derrota
-         utils:pause(2),
+         ui_core:show_game_over(GameState),     % Derrota
+         utils:pause(1),
          halt
     ; % Caso contínuo:
       ui_core:draw_ui(GameState),    % Renderiza interface
