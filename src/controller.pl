@@ -10,11 +10,13 @@
 :- use_module('constants').
 :- use_module('utils').
 
+
 start_application :-                                    
     ui_core:init_ui,                                   
     save_load:ensure_save_directory,                    
-    register_cleanup_handlers,                          
-    main_loop.                                          
+    register_cleanup_handlers,
+    menu:ask_player_name,  % Garante que o nome será armazenado
+    main_loop.                                                                    
 
 main_loop :-                                            
     menu:display_main_menu(Choice),                     % Exibe o menu principal e obtém a escolha do usuário
