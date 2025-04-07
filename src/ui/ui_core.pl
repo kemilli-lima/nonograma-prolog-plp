@@ -196,7 +196,7 @@ print_game_menu :-
     format("~s║ ➤  Sair  →  tecla q                                ║~n", [Reset]),
     format("~s", [Reset]),
 
-    format("~s║ ➤ 💾 Salvar jogo (Use a tecla v)                   ║~n", [SuccessColor]),
+    format("~s║ ➤ Salvar jogo (Use a tecla v)                      ║~n", [SuccessColor]),
     format("~s", [Reset]),
 
     format("~s╚════════════════════════════════════════════════════╝~n~n", [TitleColor]),

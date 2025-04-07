@@ -80,8 +80,8 @@ handle_input(GameState, Key, NewGameState) :-
                     fail
                 )
             )
-        ->  write("✅ Jogo salvo com sucesso!"), nl
-        ;   write("⚠️  O jogo *não* foi salvo.\n")
+        ->  write("Jogo salvo com sucesso!"), nl
+        ;   write("O jogo *não* foi salvo.\n")
         ),
 
         utils:pause(5),
