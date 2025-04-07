@@ -1,30 +1,48 @@
 % Módulo navigation.pl - Sistema de Navegação e Controles
-% 
+%
 % Responsável por:
 % - Gerenciar o loop principal do jogo
 % - Processar entradas do usuário
 % - Controlar movimento do cursor e ações
+% - Gerenciar estados do jogo
 
 :- module(navigation, [
     start_game_loop/1,  % Inicia o jogo
     handle_input/3      % Processa entrada do usuário
 ]).
 
-:- use_module(ui_core).              
-:- use_module('../core/logic').      
-:- use_module('../utils').           
-:- use_module('../core/game_state'). 
-:- use_module('../save_load').
+:- use_module(ui_core).              % Para renderização da interface
+:- use_module('../core/logic').      % Para regras do jogo
+:- use_module('../utils').           % Para utilitários
+:- use_module('../core/game_state'). % Para manipulação do estado
+:- use_module('../save_load').       % Para operações de save/load
 
-% ======================
+% =============================================
 % LOOP PRINCIPAL DO JOGO
-% ======================
+% =============================================
 
-% Inicia o loop do jogo com estado inicial
+%% start_game_loop(+GameState)
+% Inicia o loop principal do jogo com estado inicial
+%
+% Parâmetros:
+%   GameState - Estado inicial do jogo (game_state/5)
+%
+% Fluxo:
+% 1. Verifica condições de vitória/derrota
+% 2. Renderiza interface
+% 3. Captura entrada do usuário
+% 4. Processa entrada e atualiza estado
+% 5. Repete até término
 start_game_loop(GameState) :-
     game_loop(GameState).
 
-% Loop principal que mantém o jogo rodando
+
+%% game_loop(+GameState)
+% Implementação recursiva do loop principal
+%
+% Casos de término:
+% - Vitória do jogador (check_victory/1)
+% - Game Over (is_game_over/1)
 game_loop(GameState) :-
     % Verifica condições de término
     ( logic:check_victory(GameState) -> 
@@ -42,11 +60,20 @@ game_loop(GameState) :-
       game_loop(NewGameState)        % Recursão com novo estado
     ).
 
-% ========================
+% =============================================
 % MANIPULAÇÃO DE ENTRADAS
-% ========================
+% =============================================
 
-% Processa teclas pressionadas pelo usuário
+%% handle_input(+GameState, +Key, -NewGameState)
+% Processa teclas pressionadas e retorna novo estado
+%
+% Teclas suportadas:
+% - WASD: Movimento do cursor
+% - F: Preencher célula
+% - M: Marcar célula como vazia
+% - H: Pedir dica
+% - V: Salvar jogo
+% - Q: Sair
 handle_input(GameState, Key, NewGameState) :-
     GameState = game_state(_,_,_,_,(X,Y)), % Extrai posição atual
     ( Key = 'w' -> move_cursor(GameState, up, NewGameState)    % Cima
@@ -92,11 +119,15 @@ handle_input(GameState, Key, NewGameState) :-
     ; NewGameState = GameState % Tecla inválida - mantém estado
     ).
 
-% ======================
+% =============================================
 % CONTROLE DO CURSOR
-% ======================
+% =============================================
 
-% Move o cursor na direção especificada
+%% move_cursor(+GameState, +Direction, -NewGameState)
+% Atualiza posição do cursor mantendo dentro dos limites
+%
+% Direções suportadas:
+% - up, down, left, right
 move_cursor(GameState, Direction, NewGameState) :-
     GameState = game_state(Grid, Lives, Game, Solved, (X,Y)),
     grid_dimensions(Grid, Rows, Cols), % Obtém limites do tabuleiro
@@ -104,7 +135,9 @@ move_cursor(GameState, Direction, NewGameState) :-
     % Cria novo estado com posição atualizada
     NewGameState = game_state(Grid, Lives, Game, Solved, (NewX, NewY)).
 
-% Calcula nova posição dentro dos limites do tabuleiro
+
+%% new_position(+Direction, +CurrentPos, +MaxRows, +MaxCols, -NewPos)
+% Calcula nova posição garantindo que esteja dentro dos limites
 new_position(up, (X,Y), _Rows, _Cols, (NX,Y)) :-
     NX is max(0, X-1). % Não passa do topo
 new_position(down, (X,Y), Rows, _Cols, (NX,Y)) :-
@@ -114,11 +147,12 @@ new_position(left, (X,Y), _Rows, _Cols, (X,NY)) :-
 new_position(right, (X,Y), _Rows, Cols, (X,NY)) :-
     NY is min(Cols-1, Y+1). % Não passa da direita
 
-% ======================
+% =============================================
 % UTILITÁRIOS
-% ======================
+% =============================================
 
-% Obtém dimensões do tabuleiro (linhas x colunas)
+%% grid_dimensions(+Grid, -Rows, -Cols)
+% Retorna dimensões do tabuleiro (linhas × colunas)
 grid_dimensions(Grid, Rows, Cols) :-
     length(Grid, Rows), % Número de linhas
     ( Rows > 0 ->

@@ -72,7 +72,7 @@ Bem-vindo ao **Nonograma**! Um jogo de quebra-cabeça lógico-visual onde você 
 🎯 O jogo termina quando você **completa o quebra-cabeça** ou **perde todas as vidas**
 
 ---
-
+clea
 ## 🤝 Contribuição
 O jogo foi desenvolvido para a disciplina de Paradigmas de Linguagem de Programação do curso de Ciência da Computação na Universidade Federal de Campina Grande! Os alunos responsáveis pelo projeto são:
 - Kemilli Lima ([Github](https://github.com/kemilli-lima))
