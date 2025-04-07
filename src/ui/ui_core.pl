@@ -183,59 +183,147 @@ block_cell(filled, true,  ["[🟧]"]). % Célula selecionada
 block_cell(marked, true,  ["[❌]"]). % Célula selecionada
 block_cell(empty, true,   ["[· ]"]). % Célula selecionada
 
+% =============================================
+% MANIPULAÇÃO DE LINHAS E COLUNAS DO TABULEIRO
+% =============================================
+
+%% block_cell_row(+Cells, -BlockRow)
+% Converte uma linha de células em sua representação textual
+% 
+% Parâmetros:
+%   Cells    - Lista de blocos de células (cada célula é uma lista com um elemento)
+%   BlockRow - Lista de strings prontas para exibição
+%
+% Funcionamento:
+%   Extrai o primeiro elemento de cada bloco de célula usando nth0/3
 block_cell_row(Cells, BlockRow) :-
     maplist(nth0(0), Cells, BlockRow).
 
+%% merge_row_blocks(+RowHints, +CellBlocks, -MergedLines)
+% Combina blocos de dicas de linha com blocos de células em linhas completas
+%
+% Parâmetros:
+%   RowHints   - Lista de dicas de linha formatadas
+%   CellBlocks - Lista de blocos de células formatadas
+%   MergedLines- Linhas completas prontas para exibição
+%
+% Funcionamento:
+%   Concatena as dicas de linha com as células correspondentes
+%   e junta os elementos em uma única string por linha
 merge_row_blocks([], [], []).
 merge_row_blocks([H1|T1], [H2|T2], [Line|Rest]) :-
-    append(H1, H2, Row),
-    atomic_list_concat(Row, '', Line),
-    merge_row_blocks(T1, T2, Rest).
+    append(H1, H2, Row),                        % Combina dicas e células
+    atomic_list_concat(Row, '', Line),          % Junta elementos em string
+    merge_row_blocks(T1, T2, Rest).             % Processa recursivamente
 
+%% block_col_hints(+Hints, +RowHintWidth, -Lines)
+% Formata as dicas de coluna para exibição acima do tabuleiro
+%
+% Parâmetros:
+%   Hints        - Lista de dicas de coluna originais
+%   RowHintWidth - Largura necessária para alinhamento com as dicas de linha
+%   Lines        - Linhas formatadas das dicas de coluna
+%
+% Fluxo:
+% 1. Limpa e converte dicas para strings
+% 2. Calcula altura máxima das colunas
+% 3. Adiciona padding para uniformizar altura
+% 4. Transpõe matriz para exibição horizontal
+% 5. Formata cada linha com padding de alinhamento
 block_col_hints(Hints, RowHintWidth, Lines) :-
-    maplist(clean_hint_list_col, Hints, HintsStr),
-    max_column_height(HintsStr, MaxHeight),
-    pad_column_hints(HintsStr, MaxHeight, Padded),
-    transpose(Padded, Rows),
-    maplist(format_col_hint_line, Rows, RawLines),
-    format_padding(RowHintWidth, Padding),
+    maplist(clean_hint_list_col, Hints, HintsStr),  % Limpa dicas
+    max_column_height(HintsStr, MaxHeight),         % Calcula altura máxima
+    pad_column_hints(HintsStr, MaxHeight, Padded),  % Adiciona padding
+    transpose(Padded, Rows),                        % Transpõe matriz
+    maplist(format_col_hint_line, Rows, RawLines),  % Formata linhas
+    format_padding(RowHintWidth, Padding),          % Cria padding para alinhamento
+    % Aplica padding a cada linha usando lambda
     maplist({Padding}/[L,Out]>>string_concat(Padding,L,Out), RawLines, Lines).
 
+%% format_padding(+Width, -Padding)
+% Cria uma string de espaços para alinhamento
+%
+% Parâmetros:
+%   Width   - Número de espaços a serem criados
+%   Padding - String resultante com espaços
 format_padding(Width, Padding) :-
-    length(SpaceList, Width),
-    maplist(=(' '), SpaceList),
-    atomic_list_concat(SpaceList, '', Padding).
+    length(SpaceList, Width),                   % Cria lista de espaços
+    maplist(=(' '), SpaceList),                 % Garante que são espaços
+    atomic_list_concat(SpaceList, '', Padding). % Converte para string
 
+%% clean_hint_list_col(+Hints, -Cleaned)
+% Filtra e converte dicas de coluna numéricas para strings
+%
+% Parâmetros:
+%   Hints   - Lista de números representando dicas
+%   Cleaned - Lista de strings limpas (sem zeros)
 clean_hint_list_col(Hints, Cleaned) :-
-    exclude(==(0), Hints, NoZeros),
-    maplist(number_string, NoZeros, Cleaned).
+    exclude(==(0), Hints, NoZeros),             % Remove zeros
+    maplist(number_string, NoZeros, Cleaned).   % Converte para strings
 
+%% format_col_hint_line(+Hints, -Line)
+% Formata uma linha de dicas de coluna com padding consistente
+%
+% Parâmetros:
+%   Hints - Lista de strings de dicas
+%   Line  - String formatada com padding uniforme
 format_col_hint_line(Hints, Line) :-
-    maplist(pad_hint, Hints, Final),
-    atomic_list_concat(Final, '', Line).
+    maplist(pad_hint, Hints, Final),        % Aplica padding a cada dica
+    atomic_list_concat(Final, '', Line).    % Junta em uma string
 
+%% pad_hint(+Hint, -Out)
+% Formata uma dica individual com padding fixo de 4 caracteres
+%
+% Parâmetros:
+%   Hint - String com a dica original
+%   Out  - String formatada com padding
 pad_hint(Hint, Out) :-
-    format(string(Out), "~|~w~t~4+", [Hint]).
+    format(string(Out), "~|~w~t~4+", [Hint]).   % Formata com 4 caracteres de largura
 
+%% pad_column_hints(+Hints, +Max, -Padded)
+% Adiciona padding vertical às colunas de dicas para uniformizar altura
+%
+% Parâmetros:
+%   Hints  - Lista de listas de dicas por coluna
+%   Max    - Altura máxima desejada
+%   Padded - Lista com colunas preenchidas com strings vazias
 pad_column_hints([], _, []).
 pad_column_hints([H|T], Max, [Padded|Rest]) :-
     length(H, Len),
-    Pad is Max - Len,
-    length(Suffix, Pad),
-    maplist(=(""), Suffix),
-    append(Suffix, H, Padded),
-    pad_column_hints(T, Max, Rest).
+    Pad is Max - Len,                       % Calcula padding necessário
+    length(Suffix, Pad),                    % Cria lista de padding
+    maplist(=(""), Suffix),                 % Preenche com strings vazias
+    append(Suffix, H, Padded),              % Adiciona padding no início
+    pad_column_hints(T, Max, Rest).         % Processa recursivamente
 
+%% max_column_height(+Hints, -Max)
+% Calcula a altura máxima entre todas as colunas de dicas
+%
+% Parâmetros:
+%   Hints - Lista de listas de dicas por coluna
+%   Max   - Maior comprimento encontrado
 max_column_height(Hints, Max) :-
-    maplist(length, Hints, Lengths),
-    max_list(Lengths, Max).
+    maplist(length, Hints, Lengths),    % Obtém comprimento de cada coluna
+    max_list(Lengths, Max).             % Encontra o valor máximo
 
+%% get_row_hint_width(+HintBlocks, -MaxWidth)
+% Calcula a largura máxima das dicas de linha para alinhamento
+%
+% Parâmetros:
+%   HintBlocks - Lista de blocos de dicas de linha
+%   MaxWidth   - Maior largura encontrada
 get_row_hint_width([], 0).
 get_row_hint_width([[Str]|T], MaxWidth) :-
-    string_length(Str, Len),
-    get_row_hint_width(T, Rest),
-    max_list([Len, Rest], MaxWidth).
+    string_length(Str, Len),                % Obtémcomprimento da string
+    get_row_hint_width(T, Rest),            % Calcula recursivamente
+    max_list([Len, Rest], MaxWidth).        % Determina o máximo
 
+% =============================================
+% MENU DO JOGO
+% =============================================
+
+%% print_game_menu
+% Exibe o menu de controles do jogo com formatação colorida
 print_game_menu :-
     constants:title_color(TitleColor),
     constants:blue_color(BlueColor),
@@ -271,14 +359,28 @@ print_game_menu :-
     format("~s╚════════════════════════════════════════════════════╝~n~n", [TitleColor]),
     format("~s", [Reset]).
 
+% =============================================
+% TELAS DE FIM DE JOGO
+% =============================================
+
+%% show_victory(+GameState)
+% Exibe tela de vitória mantendo o estado final do tabuleiro
 show_victory(GameState) :-
     draw_ui(GameState),
     write('\n🎉 Você venceu! Parabéns! 🎉\n').
 
+%% show_game_over(+GameState)
+% Exibe tela de game over mantendo o estado final do tabuleiro
 show_game_over(GameState) :-
     draw_ui(GameState),
     write('\n☠️  Game Over! Tente novamente.\n').
 
+% =============================================
+% FINALIZAÇÃO
+% =============================================
+
+%% cleanup_systems
+% Realiza limpeza final dos sistemas de UI
 cleanup_systems :-
     format("~sSistema encerrado com segurança.~n", [constants:title_color]),
     constants:reset_color, nl.
