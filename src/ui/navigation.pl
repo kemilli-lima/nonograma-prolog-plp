@@ -84,7 +84,7 @@ handle_input(GameState, Key, NewGameState) :-
         ;   write("O jogo *não* foi salvo.\n")
         ),
 
-        utils:pause(5),
+        utils:pause(2),
         NewGameState = GameState
 
 
