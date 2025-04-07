@@ -174,30 +174,32 @@ print_game_menu :-
     constants:magenta_color(MagentaColor),
     constants:success_color(SuccessColor),
     constants:reset_color(Reset),
+    constants:error_color(RedColor),
     
-    format("~s╔═══════════════════════════════════════════════════════════╗~n", [TitleColor]),
-    format("~s║                 🎮 ESCOLHA UMA OPÇÃO 🎮                  ║~n", [TitleColor]),
-    format("~s╠═══════════════════════════════════════════════════════════╣~n", [TitleColor]),
 
-    format("~s║ 1. ✏️ Mover célula (via WASD - Use as teclas w, a, s, d) ║~n", [BlueColor]),
+    format("~s╔════════════════════════════════════════════════════╗~n", [TitleColor]),
+    format("~s║              ◆ ESCOLHA UMA OPÇÃO ◆                 ║~n", [TitleColor]),
+    format("~s╠════════════════════════════════════════════════════╣~n", [TitleColor]),
+
+    format("~s║ ➤  Mover célula  →  teclas w / a / s / d           ║~n", [BlueColor]),
     format("~s", [Reset]),
 
-    format("~s║ 2. ✏️ Preencher célula (Use a tecla f)                   ║~n", [WarningColor]),
+    format("~s║ ➤  Preencher célula  →  tecla f                    ║~n", [WarningColor]),
     format("~s", [Reset]),
 
-    format("~s║ 3. ✏️ Marcar célula (Use a tecla m)                      ║~n", [MagentaColor]),
+    format("~s║ ➤  Marcar célula  →  tecla m                       ║~n", [MagentaColor]),
     format("~s", [Reset]),
 
-    format("~s║ 4. 💡 Pedir dica (Use a tecla h)                         ║~n", [WarningColor]),
+    format("~s║ ➤  Pedir dica  →  tecla h                          ║~n", [RedColor]),
     format("~s", [Reset]),
 
-    format("~s║ 5. 🚪 Sair ((Use a tecla q)                              ║~n", [MagentaColor]),
+    format("~s║ ➤  Sair  →  tecla q                                ║~n", [Reset]),
     format("~s", [Reset]),
 
-    format("~s║ 6. 💾 Salvar jogo (Use a tecla s)                        ║~n", [SuccessColor]),
+    format("~s║ ➤  Salvar jogo  →  tecla s                         ║~n", [SuccessColor]),
     format("~s", [Reset]),
 
-    format("~s╚══════════════════════════════════════════════════════════╝~n~n", [TitleColor]),
+    format("~s╚════════════════════════════════════════════════════╝~n~n", [TitleColor]),
     format("~s", [Reset]).
 
 show_victory :-

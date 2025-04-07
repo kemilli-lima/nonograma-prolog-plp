@@ -36,9 +36,9 @@ display_main_menu(Choice) :-
     format("~sOlá ~w~s! Escolha uma opção:~n~n", [TitleColor, Name, TitleColor]),
 
     format("~s╔══════════════════════╗~n", [TitleColor]),
-    format("~s║   1 ● Novo Jogo       ║~n", [TitleColor]),
-    format("~s║   2 ● Carregar Jogo   ║~n", [TitleColor]),
-    format("~s║   3 ● Sair            ║~n", [TitleColor]),
+    format("~s║   1 ● Novo Jogo      ║~n", [TitleColor]),
+    format("~s║   2 ● Carregar Jogo  ║~n", [TitleColor]),
+    format("~s║   3 ● Sair           ║~n", [TitleColor]),
     format("~s╚══════════════════════╝~n", [TitleColor]),
     format("~s", [Reset]),
 
@@ -60,10 +60,10 @@ display_difficulty_menu(Difficulty) :-
     format("~sSelecione a dificuldade:~s~n~n", [TitleColor, TitleColor]),
 
     format("~s╔══════════════════════╗~n", [TitleColor]),
-    format("~s║   ~s1 ● Fácil~s           ║~n", [TitleColor, Green, TitleColor]),
-    format("~s║   ~s2 ● Médio~s           ║~n", [TitleColor, Orange, TitleColor]),
-    format("~s║   ~s3 ● Difícil~s         ║~n", [TitleColor, Red, TitleColor]),
-    format("~s║   ~s0 ● Voltar~s          ║~n", [TitleColor, Magenta, TitleColor]),
+    format("~s║   ~s1 ● Fácil~s          ║~n", [TitleColor, Green, TitleColor]),
+    format("~s║   ~s2 ● Médio~s          ║~n", [TitleColor, Orange, TitleColor]),
+    format("~s║   ~s3 ● Difícil~s        ║~n", [TitleColor, Red, TitleColor]),
+    format("~s║   ~s0 ● Voltar~s         ║~n", [TitleColor, Magenta, TitleColor]),
     format("~s╚══════════════════════╝~n", [TitleColor]),
     format("~s", [Reset]),
 
