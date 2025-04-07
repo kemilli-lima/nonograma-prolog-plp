@@ -3,8 +3,8 @@
     clear_screen/0,
     draw_title/0,
     draw_ui/1,
-    show_victory/0,
-    show_game_over/0,
+    show_victory/1,
+    show_game_over/1,
     cleanup_systems/0,
     block_cell_row/2
 ]).
@@ -196,18 +196,18 @@ print_game_menu :-
     format("~s║ ➤  Sair  →  tecla q                                ║~n", [Reset]),
     format("~s", [Reset]),
 
-    format("~s║ 6. 💾 Salvar jogo (Use a tecla v)                        ║~n", [SuccessColor]),
+    format("~s║ ➤ 💾 Salvar jogo (Use a tecla v)                   ║~n", [SuccessColor]),
     format("~s", [Reset]),
 
     format("~s╚════════════════════════════════════════════════════╝~n~n", [TitleColor]),
     format("~s", [Reset]).
 
-show_victory :-
-    clear_screen,
+show_victory(GameState) :-
+    draw_ui(GameState),
     write('\n🎉 Você venceu! Parabéns! 🎉\n').
 
-show_game_over :-
-    clear_screen,
+show_game_over(GameState) :-
+    draw_ui(GameState),
     write('\n☠️  Game Over! Tente novamente.\n').
 
 cleanup_systems :-
