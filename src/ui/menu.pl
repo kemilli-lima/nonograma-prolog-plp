@@ -92,7 +92,11 @@ display_load_menu :-
        utils:pause(2)
     ).
 
-print_saved_games([]).
-print_saved_games([S|Rest]) :-
-    format("~s~n", [S]),
-    print_saved_games(Rest).
+print_saved_games(Saves) :-
+    print_saved_games(Saves, 1).
+
+print_saved_games([], _).
+print_saved_games([S|Rest], Index) :-
+    format("~w. ~s~n", [Index, S]),
+    NextIndex is Index + 1,
+    print_saved_games(Rest, NextIndex).
