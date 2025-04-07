@@ -1,7 +1,7 @@
 :- module(easy, [puzzles/1]).
 
 puzzles([
-    % Puzzle 4x4
+    % Puzzle 4x4..
     puzzle(
         [ [filled, filled, filled, marked],
           [marked, filled, filled, filled],
@@ -49,7 +49,7 @@ puzzles([
           [filled, filled, filled, filled],
           [marked, filled, filled, marked] ],
 
-          [[1, 1], [4], [4], [2] ], % rowsHints
+          [[1, 1], [4], [4], [2] ],       % rowsHints
           [[3], [3], [3], [3] ],          % colsHints
           easy
     )
