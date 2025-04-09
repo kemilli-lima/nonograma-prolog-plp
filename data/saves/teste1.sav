@@ -1,0 +1,3 @@
+:- dynamic(saved_game/1).
+:- multifile(saved_game/1).
+saved_game(game_state([[empty,empty,filled,empty],[empty,empty,empty,empty],[empty,empty,empty,empty],[empty,empty,empty,empty]],3,game([[filled,filled,filled,marked],[marked,filled,filled,filled],[filled,marked,filled,marked],[filled,filled,marked,filled]],[[3],[3],[1,1],[2,1]],[[1,2],[2,1],[3],[1,1]],easy),false,','(0,2))).

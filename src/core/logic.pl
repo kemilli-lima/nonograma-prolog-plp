@@ -47,20 +47,34 @@ update_cell_with_check(GameState, (X,Y), MarkType, NewGameState, Msg) :-
     % Extrai componentes do estado do jogo
     GameState = game_state(Grid, Lives, game(Solution, RowHints, ColHints, Difficulty), Solved, _),
     
-    % Obtém valor correto da solução oficial
-    nth0(X, Solution, SolRow),
-    nth0(Y, SolRow, CorrectValue),
+    % Obtém valor atual da célula
+    nth0(X, Grid, Row),
+    nth0(Y, Row, CurrentValue),
     
-    % Verifica se a jogada está correta
-    (   MarkType == CorrectValue
-    ->  % Caso CORRETO: atualiza o grid
-        update_grid(Grid, X, Y, MarkType, NewGrid),
-        NewGameState = game_state(NewGrid, Lives, game(Solution, RowHints, ColHints, Difficulty), Solved, (X,Y)),
-        Msg = 'Jogada correta!'
-    ;   % Caso ERRADO: decrementa vidas
-        NewLives is max(0, Lives - 1),
-        NewGameState = game_state(Grid, NewLives, game(Solution, RowHints, ColHints, Difficulty), Solved, (X,Y)),
-        Msg = 'Jogada errada! Perdeu uma vida.'
+    % Verifica se a célula já está marcada
+    (   CurrentValue \= empty
+    ->  % Célula já marcada - não faz nada e retorna mensagem
+        NewGameState = GameState,
+        (   CurrentValue == filled
+        ->  Msg = 'Essa célula já foi preenchida!'
+        ;   Msg = 'Essa célula já foi marcada com X!'
+        )
+    ;   % Célula vazia - procede com verificação normal
+        % Obtém valor correto da solução oficial
+        nth0(X, Solution, SolRow),
+        nth0(Y, SolRow, CorrectValue),
+        
+        % Verifica se a jogada está correta
+        (   MarkType == CorrectValue
+        ->  % Caso CORRETO: atualiza o grid
+            update_grid(Grid, X, Y, MarkType, NewGrid),
+            NewGameState = game_state(NewGrid, Lives, game(Solution, RowHints, ColHints, Difficulty), Solved, (X,Y)),
+            Msg = 'Jogada correta!'
+        ;   % Caso ERRADO: decrementa vidas
+            NewLives is max(0, Lives - 1),
+            NewGameState = game_state(Grid, NewLives, game(Solution, RowHints, ColHints, Difficulty), Solved, (X,Y)),
+            Msg = 'Jogada errada! Perdeu uma vida.'
+        )
     ).
 
 %% update_grid(+Grid, +X, +Y, +Value, -NewGrid)
